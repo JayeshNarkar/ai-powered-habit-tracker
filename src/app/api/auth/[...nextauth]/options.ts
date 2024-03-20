@@ -22,7 +22,7 @@ export const options: NextAuthOptions = {
           placeholder: "********",
         },
       },
-      async authorize(credentials, req) {},
+      async authorize(credentials) {},
     }),
   ],
 };
