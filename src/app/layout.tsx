@@ -5,6 +5,7 @@ import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import { Providers } from "./providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -12,7 +13,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "ai-powered-habitat-tracker",
+  title: "Habit Tracker",
   description:
     "An ai powered habit tracker with private and public levels to either keep data private or to share your progress with a supportive community",
 };
@@ -30,7 +31,7 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
