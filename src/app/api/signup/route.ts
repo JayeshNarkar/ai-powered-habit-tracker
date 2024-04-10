@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/db/user-model";
 import { ConnectDB } from "@/db/connect";
+import mongoose from "mongoose";
 
 export async function POST(req: NextRequest) {
   await ConnectDB();
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await User.create({
+      _id: new mongoose.Types.ObjectId().toHexString(),
       username,
       email,
       password,

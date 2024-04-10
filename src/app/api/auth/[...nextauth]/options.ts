@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { ConnectDB } from "@/db/connect";
 import User from "@/db/user-model";
+import mongoose from "mongoose";
 
 interface User extends NextAuthUser {
   id: string;
@@ -77,6 +78,22 @@ export const options: NextAuthOptions = {
     async session({ session, token }: { session: any; token: JWTWithUser }) {
       if (token?.id && session?.user) session.user.id = token.id;
       return session;
+    },
+    async signIn({ user, account, profile }) {
+      console.log(user);
+      await ConnectDB();
+      const isUserPresent = await User.findOne({ id: user.id });
+      if (!isUserPresent) {
+        console.log("accessed");
+        const newUser = new User({
+          _id: user.id,
+          username: user.name,
+          email: user.email,
+          password: "%oauth%",
+        });
+        console.log(await newUser.save());
+      }
+      return true;
     },
   },
   pages: {
