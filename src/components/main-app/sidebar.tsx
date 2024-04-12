@@ -26,6 +26,7 @@ export default function SideBar() {
   }
   if (status === "authenticated") {
     user = session.user;
+    console.log(user);
   }
 
   return (
@@ -52,7 +53,7 @@ export default function SideBar() {
           href="/dashboard"
         >
           <PieChart className="w-6 h-6 m-3 lg:m-0 lg:ml-2" />
-          <h1 className="p-3 text-left font-semibold hidden md:block">
+          <h1 className="p-3 text-left font-semibold hidden md:block overflow-hidden truncate">
             DashBoard
           </h1>
         </Link>
@@ -63,7 +64,7 @@ export default function SideBar() {
           }`}
         >
           <MessageCircleIcon className="w-6 h-6 m-3 lg:m-0 lg:ml-2" />
-          <h1 className="p-3 text-left font-semibold hidden md:block">
+          <h1 className="p-3 text-left font-semibold hidden md:block overflow-hidden truncate">
             Social
           </h1>
         </Link>
@@ -74,7 +75,7 @@ export default function SideBar() {
           }`}
         >
           <BellIcon className="w-6 h-6 m-3 lg:m-0 lg:ml-2" />
-          <h1 className="p-3 text-left font-semibold hidden md:block">
+          <h1 className="p-3 text-left font-semibold hidden md:block overflow-hidden truncate">
             Notifications
           </h1>
         </Link>

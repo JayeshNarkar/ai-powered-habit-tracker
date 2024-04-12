@@ -58,9 +58,16 @@ export const options: NextAuthOptions = {
           });
           if (!user) throw new Error("No user with that username found!");
         }
-        if (user.password === credentials?.password) {
+        if (
+          user.password.includes("%github%") ||
+          user.password.includes("%google%")
+        ) {
+          throw new Error(
+            "Trying to log into an email thats already being used by google/github signin!"
+          );
+        } else if (user.password === credentials?.password) {
           return {
-            id: user._id,
+            id: user.id,
             name: user.username,
             email: user.email,
           };
@@ -80,18 +87,29 @@ export const options: NextAuthOptions = {
       return session;
     },
     async signIn({ user, account, profile }) {
-      console.log(user);
       await ConnectDB();
-      const isUserPresent = await User.findOne({ id: user.id });
+      const isUserPresent = await User.findOne({ email: user.email });
       if (!isUserPresent) {
-        console.log("accessed");
         const newUser = new User({
-          _id: user.id,
+          id: user.id,
           username: user.name,
           email: user.email,
-          password: "%oauth%",
+          password: `%${account?.provider}%`,
+          image: user.image,
         });
-        console.log(await newUser.save());
+        await newUser.save();
+      } else if (
+        !isUserPresent.password.includes(account?.provider) &&
+        account?.provider !== "credentials"
+      ) {
+        isUserPresent.password = `${isUserPresent.password}%${account?.provider}%`;
+        await isUserPresent.save();
+      }
+      if (!isUserPresent.image) {
+        isUserPresent.image = user.image;
+        await isUserPresent.save();
+      } else {
+        user.image = isUserPresent.image;
       }
       return true;
     },

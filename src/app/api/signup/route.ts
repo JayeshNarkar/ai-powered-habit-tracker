@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/db/user-model";
 import { ConnectDB } from "@/db/connect";
-import mongoose from "mongoose";
 
 export async function POST(req: NextRequest) {
   await ConnectDB();
@@ -10,7 +9,13 @@ export async function POST(req: NextRequest) {
     let existingUser = await User.findOne({
       email,
     });
-    if (existingUser) {
+    if (
+      existingUser &&
+      (existingUser.password.includes("%github%") ||
+        existingUser.password.includes("%google%"))
+    ) {
+      throw new Error("Email being used for google or github signin");
+    } else if (existingUser) {
       throw new Error("Email already taken");
     }
     existingUser = await User.findOne({
@@ -19,14 +24,13 @@ export async function POST(req: NextRequest) {
     if (existingUser) {
       throw new Error("Username already taken");
     }
-
     const user = await User.create({
-      _id: new mongoose.Types.ObjectId().toHexString(),
       username,
       email,
       password,
     });
-
+    user.id = user._id;
+    await user.save();
     return NextResponse.json({ message: "User signed in successfully" });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 400 });

@@ -23,6 +23,7 @@ import { signIn } from "next-auth/react";
 const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const router = useRouter();
 
@@ -49,10 +50,8 @@ const SignupForm = () => {
         },
         body: JSON.stringify({ username, email, password }),
       });
-
+      const responseJson = await response.json();
       if (!response.ok) {
-        const responseJson = await response.json();
-
         throw new Error(responseJson.error);
       } else {
         const result = await signIn("credentials", {
@@ -64,6 +63,9 @@ const SignupForm = () => {
           console.error(result.error);
           throw new Error(result.error);
         } else if (result?.ok) {
+          setErrorMessage("");
+          console.log(result);
+          setSuccessMessage(responseJson.message);
           router.push("/dashboard");
         } else {
           console.log(result);
@@ -73,6 +75,7 @@ const SignupForm = () => {
     } catch (error: any) {
       console.log(error.toString());
       setErrorMessage(error.toString());
+      setSuccessMessage("");
     } finally {
       setIsLoading(false);
     }
@@ -134,6 +137,11 @@ const SignupForm = () => {
         {errorMessage && (
           <p className="text-center font-semibold text-red-500 mb-3">
             {errorMessage}
+          </p>
+        )}
+        {successMessage && (
+          <p className="text-center font-semibold text-green-500 mb-3">
+            {successMessage}
           </p>
         )}
         <Button

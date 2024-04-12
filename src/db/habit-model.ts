@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 
+const participantSchema = new mongoose.Schema(
+  {
+    id: String,
+    dates: { type: [Date], default: [] },
+    type: {
+      type: String,
+      enum: ["private", "public", "group"],
+    },
+    groupID: String,
+  },
+  { _id: false }
+);
+
 const habitSchema = new mongoose.Schema(
   {
     habitName: {
@@ -25,7 +38,7 @@ const habitSchema = new mongoose.Schema(
       required: [true, "Please provide an ID for the creator."],
     },
     participants: {
-      type: [String],
+      type: [participantSchema],
       default: [],
     },
   },
