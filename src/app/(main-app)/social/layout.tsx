@@ -6,7 +6,7 @@ export default function SocialLayout({
   return (
     <>
       <h1>Social Layout</h1>
-      {children}
+      <div>{children}</div>
     </>
   );
 }

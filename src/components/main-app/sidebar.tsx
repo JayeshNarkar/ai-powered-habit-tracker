@@ -1,33 +1,31 @@
 "use client";
-import { useSession } from "next-auth/react";
+
 import SignoutButton from "../signout/signout_button";
 import { BellIcon, MessageCircleIcon, PieChart } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-export interface User {
-  name?: string | null;
-  email?: string | null;
-  id?: string | null;
-  image?: string | null;
-}
+import { Session } from "next-auth";
+import { Badge } from "../ui/badge";
 
-type UserOrUndefined = User | undefined;
+type User = Session["user"] & {
+  id?: string;
+};
 
-export default function SideBar() {
+export default function SideBar({
+  user,
+  badges,
+}: {
+  user: User | undefined;
+  badges:
+    | {
+        github: boolean;
+        google: boolean;
+        password: boolean;
+      }
+    | undefined;
+}) {
   const pathname = usePathname();
-
-  const { data: session, status } = useSession();
-  let user: UserOrUndefined = {};
-  if (status === "loading") {
-    user.name = "Loading...";
-    user.image = "/default_pfp.jpg";
-  }
-  if (status === "authenticated") {
-    user = session.user;
-    console.log(user);
-  }
 
   return (
     <div
@@ -41,9 +39,27 @@ export default function SideBar() {
               src={user?.image || "/default_pfp.jpg"}
               className="rounded-full w-16"
             />
-            <h1 className="md:pl-2 font-normal text-md lg:text-lg text-center hidden md:block overflow-hidden truncate">
-              {user?.name}
-            </h1>
+            <div>
+              <h1 className="md:pl-2 font-normal text-md lg:text-lg text-center hidden md:block truncate">
+                {user?.name}
+              </h1>
+              <div className="hidden md:flex content-start justify-start gap-1 ml-2 flex-wrap">
+                {badges?.github && (
+                  <Badge className="text-black bg-white">Github</Badge>
+                )}
+                {badges?.google && (
+                  <Badge className="bg-white">
+                    <span className="text-blue-500">G</span>
+                    <span className="text-red-500">o</span>
+                    <span className="text-yellow-500">o</span>
+                    <span className="text-blue-500">g</span>
+                    <span className="text-green-500">l</span>
+                    <span className="text-red-500">e</span>
+                  </Badge>
+                )}
+                {badges?.password && <Badge>Credentials</Badge>}
+              </div>
+            </div>
           </div>
         </Link>
         <Link

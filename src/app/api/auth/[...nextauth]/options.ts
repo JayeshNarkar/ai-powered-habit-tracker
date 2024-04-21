@@ -97,19 +97,23 @@ export const options: NextAuthOptions = {
           password: `%${account?.provider}%`,
           image: user.image,
         });
-        await newUser.save();
-      } else if (
-        !isUserPresent.password.includes(account?.provider) &&
-        account?.provider !== "credentials"
-      ) {
-        isUserPresent.password = `${isUserPresent.password}%${account?.provider}%`;
-        await isUserPresent.save();
-      }
-      if (!isUserPresent.image) {
-        isUserPresent.image = user.image;
-        await isUserPresent.save();
+        const result = await newUser.save();
       } else {
-        user.image = isUserPresent.image;
+        if (
+          !isUserPresent.password.includes(account?.provider) &&
+          account?.provider !== "credentials"
+        ) {
+          isUserPresent.password = `${isUserPresent.password}%${account?.provider}%`;
+          await isUserPresent.save();
+        }
+        if (!isUserPresent.image) {
+          isUserPresent.image = user.image;
+          await isUserPresent.save();
+          user.id = isUserPresent.id;
+        } else {
+          user.id = isUserPresent.id;
+          user.image = isUserPresent.image;
+        }
       }
       return true;
     },

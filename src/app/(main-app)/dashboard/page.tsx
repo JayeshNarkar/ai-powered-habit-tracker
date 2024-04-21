@@ -1,20 +1,19 @@
-"use client";
 import HabitsList from "@/components/main-app/dashboard/habitsList";
-import SetHabitForm from "@/components/main-app/dashboard/setHabitForm";
+import SuggestHabbits from "@/components/main-app/dashboard/suggestHabbits";
 import WeekOverview from "@/components/main-app/dashboard/weekOverview";
-import { useSession } from "next-auth/react";
 
 export default function DashBoard() {
-  const { data: session, status } = useSession();
   return (
-    <div className="lg:grid lg:grid-rows-6 lg:grid-cols-5 gap-4 min-h-screen p-3">
-      <div className="lg:row-span-4 lg:col-span-3 bg-gray-200 rounded-md p-3 mb-3 lg:mb-0">
-        <SetHabitForm />
+    <div className="md:grid gap-4 min-h-screen p-3 md:grid-rows-5 md:max-h-screen">
+      <div className="md:grid grid-cols-4 row-span-3">
+        <div className="bg-gray-200 rounded-md p-3 mb-3 md:mb-0 md:mr-4 md:col-span-1">
+          <SuggestHabbits />
+        </div>
+        <div className="md:flex-grow bg-gray-200 rounded-md p-3 mb-3 md:mb-0 md:col-span-3 overflow-y-auto">
+          <HabitsList />
+        </div>
       </div>
-      <div className="lg:col-span-2 lg:row-span-4 bg-gray-200 rounded-md p-3 mb-3 lg:mb-0">
-        <HabitsList />
-      </div>
-      <div className="lg:row-span-2 lg:col-span-5 bg-gray-200 rounded-md p-3 mb-3 lg:mb-0">
+      <div className="bg-gray-200 rounded-md p-3 mb-3 md:mb-0 row-span-2">
         <WeekOverview />
       </div>
     </div>
